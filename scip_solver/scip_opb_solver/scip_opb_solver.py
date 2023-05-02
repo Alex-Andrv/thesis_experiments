@@ -20,13 +20,13 @@ def parse_opb(file_name):
             pb_constraints.append(pb_constraint)
     return pb_constraints
 
-pb_constraints = parse_opb("../../new_min_opb/PvS_8_4_min_new.opb")
+pb_constraints = parse_opb("../../diplom_opb_v_4_with_restart/cvd.opb")
 
 
 def solve_scip(pb_constraints):
     model = Model()
 
-    model.setParam('display/verblevel', 3)
+    model.setParam('display/verblevel', 5)
 
     variables = dict()
 

@@ -1,63 +1,36 @@
 from compression.simplification import simplification
-from compression.simplification_v_2 import simplification_v_2
+from compression.simplification_v_3 import simplification_v_3
+from compression.simplification_v_4 import simplification_v_4
 from util.DIMACS_parser import parse_cnf
+from util.OPB_writer import print_pb_to_opb, print_clause_to_opb
 from util.stats import print_stats
 
 from util.validate import validate_ans
 
-file = open("../snake-in-the-box/cnfs/s-n-b_8_96.cnf")
-out = open("../s-n-b_8_96.opb", "w")
+for file_name in ['cvd', 'cvk', 'cvw', 'dvk', 'dvw', 'kvw']:
+    file = open(f"../diplom_cnf/{file_name}.cnf")
+    out = open(f"../diplom_opb_v_1_new/{file_name}.opb", "w")
 
-clause, var, clause_size = parse_cnf(file)
+    clause, var, clause_size = parse_cnf(file)
 
-glues, remainder, result_glues = simplification(clause)
+    glues, remainder, result_glues = simplification(clause)
 
-# 100
-# 540
-# 5
+    validate_ans(glues, result_glues)
 
-validate_ans(glues, result_glues)
+    cons = len(remainder) + sum(map(len, result_glues))
 
-cons = len(remainder) + sum(map(len, result_glues))
+    assert len(remainder) + sum(map(len, glues)) == clause_size
 
-assert len(remainder) + sum(map(len, glues)) == clause_size
+    out.writelines(f"* #variable= {var} #constraint= {cons} \n")
 
-out.writelines(f"* #variable= {var} #constraint= {cons} \n")
+    for clause in remainder:
+        print_clause_to_opb(clause, out)
 
-def print_clause(clause, out):
-    line = ""
-    de = 1
-    for lit in clause:
-        if lit > 0:
-            line += "1 x" + str(lit) + " "
-        elif lit < 0:
-            line += "-1 x" + str(abs(lit)) + " "
-            de -= 1
-    line += ">= " + str(de) + ";"
-    out.writelines(line + '\n')
+    for pb_constraints in result_glues:
+        for pb_constraint in pb_constraints:
+            print_pb_to_opb(pb_constraint, out)
 
-
-def print_glue_res(res, out):
-    line = ""
-    val_b, name_b = res.pop()
-    assert name_b[:-2] == 'b'
-    for val, name in res:
-        line += str(val) + "  " + "x" + name[:-2] + " "
-    line += ">= " + str(val_b) + ";"
-    out.writelines(line + '\n')
-
-
-for clause in remainder:
-    print_clause(clause, out)
-
-
-for pb_constraints in result_glues:
-    for pb_constraint in pb_constraints:
-        print_glue_res(pb_constraint, out)
-
-
-
-print_stats(glues, remainder, result_glues)
+    print_stats(glues, remainder, result_glues)
 
 
 

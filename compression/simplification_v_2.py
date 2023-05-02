@@ -37,9 +37,9 @@ def to_pb(glue, cnt_pb=1):
         variables = []
 
         for var in vars:
-            variables.append(model.addVar(vtype="I", name=f"{var}_{i}", lb=lb, ub=ub))
+            variables.append(model.addVar(vtype="I", name=f"{var}", lb=lb, ub=ub))
 
-        variables.append(model.addVar(vtype="I", name=f"b_{i}", lb=lb, ub=ub))
+        variables.append(model.addVar(vtype="I", name=f"b", lb=lb, ub=ub))
 
         variables_list.append(variables)
 

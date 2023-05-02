@@ -40,9 +40,9 @@ def to_pb(glue, cnt_pb, max_sum=None):
         variables = []
 
         for var in vars:
-            variables.append(model.addVar(vtype="I", name=f"{var}_{i}", lb=lb, ub=ub))
+            variables.append(model.addVar(vtype="I", name=f"{var}", lb=lb, ub=ub))
 
-        variables.append(model.addVar(vtype="I", name=f"b_{i}", lb=lb, ub=ub))
+        variables.append(model.addVar(vtype="I", name=f"b", lb=lb, ub=ub))
 
         variables_list.append(variables)
 
@@ -111,7 +111,7 @@ def minimize_max_sum(glue, cnt_pb):
     return status, res
 
 
-def simplification_v_3(clauses: list, diff=10, max_diff_var=30, compression_percentage=0.099, debug=False):
+def simplification_v_3(clauses: list, diff=2, max_diff_var=6, compression_percentage=0.5, debug=True):
     clauses = clauses
     was_glue = [False] * len(clauses)
     len_clauses = len(clauses)

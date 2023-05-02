@@ -1,7 +1,7 @@
 import random
 from functools import reduce
 
-from pyeda.boolalg.expr import Complement
+from pyeda.boolalg.expr import Complement, OrOp
 from pyeda.inter import *
 from tqdm import tqdm
 
@@ -25,6 +25,8 @@ def to_clauses(new_clause_min):
     clauses = []
     if isinstance(new_clause_min, Variable) | isinstance(new_clause_min, Complement):
         return [[parse_var(new_clause_min)]]
+    if isinstance(new_clause_min, OrOp):
+        return [[parse_var(v) for v in new_clause_min.xs]]
     for new_clause in new_clause_min.xs:
         clause = []
         if isinstance(new_clause, Variable) | isinstance(new_clause, Complement):
@@ -38,6 +40,8 @@ def to_clauses(new_clause_min):
 
 
 def mini(clauses):
+    if len(clauses) == 0:
+        return []
     vars = dict()
     new_clause = []
     for clause in clauses:

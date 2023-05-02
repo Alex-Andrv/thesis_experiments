@@ -3,18 +3,6 @@ from prettytable import PrettyTable
 from util.DIMACS_parser import parse_cnf
 from espresso_minimizer import espresso_minimizer
 
-file = open("../cnf/BvP_5_4.cnf")
-out = open("../mini/BvP_5_4.cnf", "w")
-
-clause, var, clause_size = parse_cnf(file)
-
-glues, remainder, result_glues = espresso_minimizer(clause)
-
-cons = len(remainder) + sum(map(len, result_glues))
-
-assert len(remainder) + sum(map(len, glues)) == clause_size
-
-out.writelines(f"p cnf {var} {cons} \n")
 
 def print_clause(clause, out):
     line = ""
@@ -23,18 +11,6 @@ def print_clause(clause, out):
     line += "0"
     out.writelines(line + '\n')
 
-
-for clause in remainder:
-    print_clause(clause, out)
-
-
-for clauses in result_glues:
-    for clause in clauses:
-        print_clause(clause, out)
-
-# for clauses in glues:
-#     for clause in clauses:
-#         print_clause(clause, out)
 
 
 def print_matrix(matrix):
@@ -69,5 +45,27 @@ def print_stats(glues, remainder, result_glues):
     print(f"old clause: {after - new}")
     print_info_table(glues, result_glues)
 
+for file_name in ['BvP_8_4.cnf', 'BvP_9_4.cnf', 'BvS_8_4.cnf', 'BvS_9_4.cnf', 'PvS_8_4.cnf', 'PvS_9_4.cnf']:
+    file = open(f"../diplom_cnf/{file_name}")
+    out = open(f"../diplom_mini/{file_name}", "w")
 
-print_stats(glues, remainder, result_glues)
+    clause, var, clause_size = parse_cnf(file)
+
+    glues, remainder, result_glues = espresso_minimizer(clause)
+
+    cons = len(remainder) + sum(map(len, result_glues))
+
+    assert len(remainder) + sum(map(len, glues)) == clause_size
+
+    out.writelines(f"p cnf {var} {cons} \n")
+
+    for clause in remainder:
+        print_clause(clause, out)
+
+    for clauses in result_glues:
+        for clause in clauses:
+            print_clause(clause, out)
+
+    print_stats(glues, remainder, result_glues)
+
+

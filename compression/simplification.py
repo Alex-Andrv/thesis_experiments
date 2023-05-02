@@ -36,9 +36,9 @@ def to_pb(glue, cnt_pb=1):
         variables = []
 
         for var in vars:
-            variables.append(model.addVar(vtype="I", name=f"{var}_{i}", lb=lb, ub=ub))
+            variables.append(model.addVar(vtype="I", name=f"{var}", lb=lb, ub=ub))
 
-        variables.append(model.addVar(vtype="I", name=f"b_{i}", lb=lb, ub=ub))
+        variables.append(model.addVar(vtype="I", name=f"b", lb=lb, ub=ub))
 
         variables_list.append(variables)
 
@@ -78,8 +78,7 @@ def to_pb(glue, cnt_pb=1):
         res = []
         for variables in variables_list:
             for v in variables:
-                res.append((model.getVal(v), v.name))
-
+                res.append((round(model.getVal(v)), v.name))
         return True, res
     else:
         return False, None
@@ -104,12 +103,12 @@ def random_subset(glue, count_random=60):
     return False, None, None
 
 
-def simplification(clauses: list, window=2, cnt_mistakes=4):
+def simplification(clauses: list, window=4, cnt_mistakes=4):
     glues = []
     result_glues = []
     i = 0
     pbar = tqdm(total=len(clauses))
-    while i + window < len(clauses):
+    while i + window <= len(clauses):
         tmp_window = window
 
         res = None
@@ -146,23 +145,16 @@ def simplification(clauses: list, window=2, cnt_mistakes=4):
                 res = new_res
                 tmp_window += 1
 
+            if tmp_window >= len(clauses):
+                i_tmp += (tmp_window - 1)
+                break
+
         assert i < i_tmp
         pbar.update(i_tmp - i)
         i = i_tmp
 
 
         if res:
-            # print(f"new glue {len(right_glue)}")
-            vars_set = list(map(lambda x: x, itertools.chain(*right_glue)))
-            # print(res)
-            # print(right_glue)
-            # for v1 in vars_set:
-            #     for v2 in vars_set:
-            #         if v1 == v2 * -1:
-            #             print(res)
-            #             print(right_glue)
-            # if len(right_glue) >= 4:
-            #     print(right_glue)
             glues.append(right_glue)
             result_glues.append([res])
 
