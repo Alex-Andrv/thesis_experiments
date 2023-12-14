@@ -1,0 +1,11 @@
+name: thesis_experiments
+channels:
+  - defaults
+  - conda-forge
+dependencies:
+  - python=3.11.6
+  - click=8.1.7
+  - tqdm=4.66.1
+  - pip:
+      - python-sat==0.1.8.dev9
+      - pyeda==0.28.0
